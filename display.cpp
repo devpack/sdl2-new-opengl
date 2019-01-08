@@ -79,6 +79,10 @@ Display::Display(int screen_width, int screen_height, bool fullscreen, bool vsyn
         std::cout << glewGetErrorString(glewInit()) << std::endl;
     }
 
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_ARB);
+	glEnable(GL_POINT_SMOOTH);
+	//glEnable(GL_POINT_SPRITE);
+
 	/*glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -93,6 +97,12 @@ void Display::Clear(float r, float g, float b, float a)
 {
 	glClearColor(r, g, b, a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+/*---------------------------------------------------------------------------*/
+void Display::SwapBuffers()
+{
+	SDL_GL_SwapWindow(mainWindow);
 }
 
 /*---------------------------------------------------------------------------*/

@@ -6,6 +6,7 @@
 #include "render.h"
 
 #include <sstream>
+#include <vector>
 
 #include "glm/glm.hpp"
 #include "glm/gtx/transform.hpp"
@@ -35,6 +36,8 @@ void game_loop(Display *display, Render *render, Shader *shader, Camera *camera)
 	bool right = false;
 	bool up = false;
 	bool down = false;
+
+	bool stop_motion = false;
 
 	// cube motion
 	float motion_counter = 0.0f;
@@ -75,6 +78,10 @@ void game_loop(Display *display, Render *render, Shader *shader, Camera *camera)
 				if(event.key.keysym.sym == SDLK_ESCAPE) {
 					loop = false;
 					break;
+				}
+
+				if(event.key.keysym.sym == SDLK_SPACE) {
+					stop_motion = !stop_motion;
 				}
 
 				if(event.key.keysym.sym == SDLK_UP)
@@ -142,7 +149,8 @@ void game_loop(Display *display, Render *render, Shader *shader, Camera *camera)
 		rotz.z = -motion_counter;
 		glm::mat4 rot_mz = glm::rotate(rotz.z, glm::vec3(0.0f, 0.0f, 1.0f));
 
-		// send our MVP matrix to the currently bound shader, in the "transform" uniform mat4
+		// send our MVP matrix to the currently bound shader
+		// camera = view_project matrix; model matrix = tr_mx * rotx_mx * rot_my * rot_mz 
 		shader -> Update(tr_mx * rotx_mx * rot_my * rot_mz, camera);
 		//shader -> Update(glm::mat4(1.0f), camera);
 
@@ -150,10 +158,12 @@ void game_loop(Display *display, Render *render, Shader *shader, Camera *camera)
 		render -> Draw();
 
 		// show back buffer
-		SDL_GL_SwapWindow(display->mainWindow);
+		display -> SwapBuffers();
 
 		// for our cube motion
-		motion_counter += 0.01f;
+		if(!stop_motion) {
+			motion_counter += 0.01f;
+		}
 
 		// FPS
         frame++;
@@ -172,6 +182,11 @@ void game_loop(Display *display, Render *render, Shader *shader, Camera *camera)
 
 	} // end while loop
 } 
+
+float xrand(float xl, float xh)
+{
+	return (xl + (xh - xl) *  drand48() ); 
+}
 
 /*---------------------------------------------------------------------------*/
 /*--------------------------------- MAIN ------------------------------------*/
@@ -196,21 +211,16 @@ int main(int argc, char* argv[])
 	// SDL screen
     Display *display = new Display(screen_width, screen_height, fullscreen, vsync);
 
-	// cube
-	Vertex cube_vertices[] = { Vertex(glm::vec3(-1.0, -1.0, 1.0)),
-						       Vertex(glm::vec3(1.0, -1.0, 1.0)),
-						       Vertex(glm::vec3(1.0, 1.0, 1.0)),
-						       Vertex(glm::vec3(-1.0, 1.0, 1.0)),
-						  
-						       Vertex(glm::vec3(-1.0, -1.0, -1.0)),
-						       Vertex(glm::vec3(1.0, -1.0, -1.0)),
-						       Vertex(glm::vec3(1.0, 1.0, -1.0)),
-						       Vertex(glm::vec3(-1.0, 1.0, -1.0)),};
+	srand(time(NULL));
 
-	unsigned int indices[] {0, 1, 1, 2, 2, 3, 3, 0, 4, 5, 5, 6, 6, 7, 7, 4, 0, 4, 1, 5, 2, 6, 3, 7};
+	// cube points
+	std::vector<glm::vec3> cube;
+
+    for(unsigned int i = 0; i < 10000; i++)
+		cube.push_back(glm::vec3(xrand(-1.0, 1.0), xrand(-1.0, 1.0), xrand(-1.0, 1.0)));
 
 	// data vao/vbo
-	Render *render = new Render(cube_vertices, sizeof(cube_vertices)/sizeof(cube_vertices[0]), indices, sizeof(indices)/sizeof(indices[0]));
+	Render *render = new Render(cube);
 
 	// shaders
 	Shader *shader = new Shader("../shader.vertex", "../shader.fragment");

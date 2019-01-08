@@ -1,5 +1,5 @@
-#ifndef RENDER_H
-#define RENDER_H
+#ifndef __RENDER_H_
+#define __RENDER_H_
 
 #define GLM_ENABLE_EXPERIMENTAL
 
@@ -10,24 +10,10 @@
 
 /*---------------------------------------------------------------------------*/
 
-struct Vertex
-{
-	public:
-		Vertex(const glm::vec3& pos)
-		{
-			this->pos = pos;
-		}
-
-	private:
-		glm::vec3 pos;
-};
-
-/*---------------------------------------------------------------------------*/
-
 class Render
 {
 	public:
-		Render(Vertex* vertices, unsigned int nb_vertices, unsigned int * indices, unsigned int nb_indices);
+		Render(std::vector<glm::vec3> vertices);
 		virtual ~Render();
 
 		void Draw();

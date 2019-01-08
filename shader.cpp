@@ -29,7 +29,8 @@ Shader::Shader(const std::string& vertexShaderFilename, const std::string& fragm
 	glValidateProgram(program);
 	CheckShaderError(program, GL_LINK_STATUS, true, "Invalid shader program");
 
-    transformations[TRANSFORMATION_1] = glGetUniformLocation(program, "transform");
+    transformations[VIEW_PROJECTION] = glGetUniformLocation(program, "view_projection");
+    transformations[MODEL] = glGetUniformLocation(program, "model");
 }
 
 /*---------------------------------------------------------------------------*/
@@ -72,8 +73,10 @@ GLuint Shader::CreateShader(const std::string& text, unsigned int type)
 
 void Shader::Update(glm::mat4 model, Camera *camera)
 {
-    glm::mat4 mvp = camera->GetViewProjection() * model;
-    glUniformMatrix4fv(transformations[TRANSFORMATION_1], 1, GL_FALSE, &mvp[0][0]);
+    glm::mat4 mvp = camera->GetViewProjection();
+
+    glUniformMatrix4fv(transformations[VIEW_PROJECTION], 1, GL_FALSE, &mvp[0][0]);
+    glUniformMatrix4fv(transformations[MODEL], 1, GL_FALSE, &model[0][0]);
 }
 
 void Shader::Bind()

@@ -1,5 +1,5 @@
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef __SHADER_H_
+#define __SHADER_H_
 
 #include <string>
 #include <GL/glew.h>
@@ -32,7 +32,8 @@ class Shader
 		// our transformations
 		enum
 		{
-			TRANSFORMATION_1,
+			VIEW_PROJECTION,
+			MODEL,
 			NB_TRANSFORMATION
 		};
 

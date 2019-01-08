@@ -1,5 +1,5 @@
-#ifndef DISPLAY_H
-#define DISPLAY_H
+#ifndef __DISPLAY_H_
+#define __DISPLAY_H_
 
 #include <string>
 #include <iostream>
@@ -27,6 +27,8 @@ public:
        virtual ~Display();
 
        void Clear(float r, float g, float b, float a);
+       void SwapBuffers();
+
 };
 
 #endif
