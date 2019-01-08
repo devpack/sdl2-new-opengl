@@ -64,7 +64,7 @@ public:
                 yoffset *= this->mouse_sensitivity;
                 
                 this->yaw   += xoffset;
-                this->pitch += yoffset;
+                this->pitch -= yoffset;
 
                 //std::cout << this->yaw << std::endl;
 
@@ -93,9 +93,9 @@ public:
                 if (backward)
                         this->pos -= this->front * velocity;
                 if (left)
-                        this->pos -= this->right * velocity;
-                if (right)
                         this->pos += this->right * velocity;
+                if (right)
+                        this->pos -= this->right * velocity;
                 if (up)
                         this->pos.y += velocity;
                 if (down)
